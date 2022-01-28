@@ -6,7 +6,6 @@
  */
 
 
-
 import java.util.Map;
 
 public class Binary {
@@ -15,23 +14,22 @@ public class Binary {
     private String rs;
     private String rt;
     private String rd;
-    private String immediate;
+    private int immediate;
     private String shamt;
     private int lineNum;
-    private BinaryData binaryData;
-    private Map<String, Integer> labeltoLineNum;
+    public Mips mips = new Mips();
+    private Map<String, Integer> labelToLineNum;
 
 
-    public Binary(Map<String, Integer> labelToLineNum, Integer lineNum, String rawLine) {
+    public Binary(Integer lineNum, String rawLine, Map<String, Integer> labelToLineNum) {
         this.rawLine = rawLine;
         this.lineNum = lineNum;
         this.rd = "";
         this.rs = "";
         this.rt = "";
-        this.immediate = "";
+        this.immediate = 0;
         this.shamt = "00000";
-        binaryData = new BinaryData();
-        this.labeltoLineNum = labelToLineNum;
+        this.labelToLineNum = labelToLineNum;
 
     }
 
@@ -113,50 +111,48 @@ public class Binary {
     ///R FORMAT////
     // OPCODE : RS : RT : RD : SHAMT : FUNCT //
     public void andInst() {
-//        System.out.println("================= \n" + lineNum + " : " + rawLine + "\n" + "This is an andInst");
-//        System.out.println("and OPCODE: " + binaryData.getOpCode(instruction));
-//        System.out.println("and FUNCT: " + binaryData.getFunct(instruction));
+        String[] regArr = rawLine.split(",");
+        rd = regArr[0];
+        rs = regArr[1];
+        rt = regArr[2];
 
-        regParseR();
-        System.out.println(
-                binaryData.getOpCode(instruction) + " "
-                        + binaryData.getRegBinary(rs) + " "
-                        + binaryData.getRegBinary(rt) + " "
-                        + binaryData.getRegBinary(rd) + " "
-                        + shamt + " "
-                        + binaryData.getFunct(instruction));
+        int result;
+
+        result = MipsData.registers.get(rs) & MipsData.registers.get(rt);
+
+        MipsData.registers.put(rd, result);
+
     }
 
     public void orInst() {
-//        System.out.println("================= \n" + lineNum + " : " + rawLine + "\n" + "This is an orInst");
-//        System.out.println("or OPCODE: " + binaryData.getOpCode(instruction));
-//        System.out.println("or FUNCT: " + binaryData.getFunct(instruction));
 
-        regParseR();
-        System.out.println(
-                binaryData.getOpCode(instruction) + " "
-                        + binaryData.getRegBinary(rs) + " "
-                        + binaryData.getRegBinary(rt) + " "
-                        + binaryData.getRegBinary(rd) + " "
-                        + shamt + " "
-                        + binaryData.getFunct(instruction));
+        String[] regArr = rawLine.split(",");
+        rd = regArr[0];
+        rs = regArr[1];
+        rt = regArr[2];
+
+        int result;
+
+        result = MipsData.registers.get(rs) | MipsData.registers.get(rt);
+
+        MipsData.registers.put(rd, result);
+
     }
 
     public void addInst() {
-//        System.out.println("================= \n" + lineNum + " : " + this.rawLine + "\n" + "This is an addInst");
-//        System.out.println("add OPCODE: " + binaryData.getOpCode(instruction));
-//        System.out.println("add FUNCT: " + binaryData.getFunct(instruction));
+
+        String[] regArr = rawLine.split(",");
+        rd = regArr[0];
+        rs = regArr[1];
+        rt = regArr[2];
+
+        int result;
+
+        result = MipsData.registers.get(rs) + MipsData.registers.get(rt);
+
+        MipsData.registers.put(rd, result);
 
 
-        regParseR();
-
-        System.out.println(
-                binaryData.getOpCode(instruction) + " "
-                        + binaryData.getRegBinary(rs) + " "
-                        + binaryData.getRegBinary(rt) + " "
-                        + binaryData.getRegBinary(rd) + " "
-                        + shamt + " "
-                        + binaryData.getFunct(instruction));
     }
 
     ///HAD TO SWAP RS and RT for some reason...... ???
@@ -165,20 +161,14 @@ public class Binary {
 //        System.out.println("sll OPCODE: " + binaryData.getOpCode(instruction));
 //        System.out.println("sll FUNCT: " + binaryData.getFunct(instruction));
 
-        regParseR();
+
         //Deals with Shift AMT
         shamt = Integer.toBinaryString(Integer.parseInt(rt));
 
         while (shamt.length() < 5) {
             shamt = "0" + shamt;
         }
-        System.out.println(
-                binaryData.getOpCode(instruction) + " "
-                        + binaryData.getRegBinary(rt) + " "
-                        + binaryData.getRegBinary(rs) + " "
-                        + binaryData.getRegBinary(rd) + " "
-                        + shamt + " "
-                        + binaryData.getFunct(instruction));
+
     }
 
     public void subInst() {
@@ -186,14 +176,7 @@ public class Binary {
 //        System.out.println("sub OPCODE: " + binaryData.getOpCode(instruction));
 //        System.out.println("sub FUNCT: " + binaryData.getFunct(instruction));
 
-        regParseR();
-        System.out.println(
-                binaryData.getOpCode(instruction) + " "
-                        + binaryData.getRegBinary(rs) + " "
-                        + binaryData.getRegBinary(rt) + " "
-                        + binaryData.getRegBinary(rd) + " "
-                        + shamt + " "
-                        + binaryData.getFunct(instruction));
+
     }
 
 
@@ -202,14 +185,7 @@ public class Binary {
 //        System.out.println("slt OPCODE: " + binaryData.getOpCode(instruction));
 //        System.out.println("slt FUNCT: " + binaryData.getFunct(instruction));
 
-        regParseR();
-        System.out.println(
-                binaryData.getOpCode(instruction) + " "
-                        + binaryData.getRegBinary(rs) + " "
-                        + binaryData.getRegBinary(rt) + " "
-                        + binaryData.getRegBinary(rd) + " "
-                        + shamt + " "
-                        + binaryData.getFunct(instruction));
+
     }
 
     public void jrInst() {
@@ -218,14 +194,7 @@ public class Binary {
 //        System.out.println("jr FUNCT: " + binaryData.getFunct(instruction));
 
         rs = rawLine;
-//        System.out.println("RS: " + rs);
-        System.out.println(
-                binaryData.getOpCode(instruction) + " "
-                        + binaryData.getRegBinary(rs) + " "
-                        + binaryData.getRegBinary(rt) + " "
-                        + binaryData.getRegBinary(rd) + " "
-                        + shamt + " "
-                        + binaryData.getFunct(instruction));
+
     }
     ///END R FORMAT///
 
@@ -233,128 +202,97 @@ public class Binary {
     ///I FORMAT ////
     //OPCODE : RS : RT : IMMEDIATE //
     public void addiInst() {
-//        System.out.println("================= \n" + lineNum + " : " + rawLine + "\n" + "This is an addiInst");
-//        System.out.println("addi OPCODE: " + binaryData.getOpCode(instruction));
 
         String[] regArr = rawLine.split(",");
         rd = regArr[0];
         rs = regArr[1];
-        immediate = regArr[2];
+        immediate = Integer.parseInt(regArr[2]);
 
-        immediate = Integer.toBinaryString(Integer.parseInt(immediate));
+        int result;
 
-        immmediateLength();
-//        System.out.println("RD " + rd);
-//        System.out.println("RS " + rs);
+        result = MipsData.registers.get(rs) + immediate;
 
-        System.out.println(
-                binaryData.getOpCode(instruction) + " "
-                        + binaryData.getRegBinary(rd) + " "
-                        + binaryData.getRegBinary(rs) + " "
-                        + immediate);
+        MipsData.registers.put(rd, result);
+
 
     }
 
     public void beqInst() {
-//        System.out.println("================= \n" + lineNum + " : " + rawLine + "\n" + "This is an beqInst");
-//        System.out.println("beq OPCODE: " + binaryData.getOpCode(instruction));
 
-        int labelOffset;
+        int labelNum;
+        int rdVal;
+        int rsVal;
 
         String[] regArr = rawLine.split(",");
         rd = regArr[0];
         rs = regArr[1];
-        labelOffset = labeltoLineNum.get(regArr[2]);
-        labelOffset -= lineNum + 1;
+        labelNum = labelToLineNum.get(regArr[2]);
 
-        immediate = Integer.toBinaryString(labelOffset);
+        rdVal = MipsData.registers.get(rd);
+        rsVal = MipsData.registers.get(rs);
 
-        immmediateLength();
+        if (rdVal == rsVal) {
+            MipsData.pc = labelNum;
+        }
 
-//        System.out.println("RD " + rd);
-//        System.out.println("RS " + rs);
-//
-        System.out.println(
-                binaryData.getOpCode(instruction) + " "
-                        + binaryData.getRegBinary(rd) + " "
-                        + binaryData.getRegBinary(rs) + " "
-                        + immediate + " ");
+
     }
 
 
     public void bneInst() {
-//        System.out.println("================= \n" + lineNum + " : " + rawLine + "\n" + "This is an bneInst");
-//        System.out.println("bne OPCODE: " + binaryData.getOpCode(instruction));
-        int labelOffset;
+
+        int labelNum;
+        int rdVal;
+        int rsVal;
 
         String[] regArr = rawLine.split(",");
         rd = regArr[0];
         rs = regArr[1];
-        labelOffset = labeltoLineNum.get(regArr[2]);
-        labelOffset -= lineNum + 1;
+        labelNum = labelToLineNum.get(regArr[2]);
 
-        immediate = Integer.toBinaryString(labelOffset);
+        rdVal = MipsData.registers.get(rd);
+        rsVal = MipsData.registers.get(rs);
 
-        immmediateLength();
+        if (rdVal != rsVal) {
+            MipsData.pc = labelNum - 1;
+        }
 
-//        System.out.println("RD " + rd);
-//        System.out.println("RS " + rs);
-
-        System.out.println(
-                binaryData.getOpCode(instruction) + " "
-                        + binaryData.getRegBinary(rd) + " "
-                        + binaryData.getRegBinary(rs) + " "
-                        + immediate + " ");
     }
 
     public void lwInst() {
-//        System.out.println("================= \n" + lineNum + " : " + rawLine + "\n" + "This is an lwInst");
-//        System.out.println("lw OPCODE: " + binaryData.getOpCode(instruction));
+
 
         int offset;
+        int index;
+        int memWord;
 
         String[] regArr = rawLine.split(",");
         rd = regArr[0];
         rs = regArr[1];
         offset = Integer.parseInt(rs.substring(0, rs.indexOf("(")));
         rs = rs.substring(rs.indexOf("(") + 1, rs.indexOf(")"));
-        immediate = Integer.toBinaryString(offset);
+        //Index = rs + offset
+        //Then we pull that index from data memory and store it in rd
+        index = MipsData.registers.get(rs) + offset;
+        memWord = MipsData.dataMemory[index];
+        MipsData.registers.put(rd, memWord);
 
-        immmediateLength();
-
-//        System.out.println("RD " + rd);
-//        System.out.println("RS " + rs);
-
-        System.out.println(
-                binaryData.getOpCode(instruction) + " "
-                        + binaryData.getRegBinary(rs) + " "
-                        + binaryData.getRegBinary(rd) + " "
-                        + immediate + " ");
     }
 
     public void swInst() {
-//        System.out.println("================= \n" + lineNum + " : " + rawLine + "\n" + "This is an swInst");
-//        System.out.println("sw OPCODE: " + binaryData.getOpCode(instruction));
 
         int offset;
+        int index;
 
         String[] regArr = rawLine.split(",");
         rd = regArr[0];
         rs = regArr[1];
         offset = Integer.parseInt(rs.substring(0, rs.indexOf("(")));
         rs = rs.substring(rs.indexOf("(") + 1, rs.indexOf(")"));
-        immediate = Integer.toBinaryString(offset);
 
-        immmediateLength();
+        index = MipsData.registers.get(rs) + offset;
+        MipsData.dataMemory[index] = MipsData.registers.get(rd);
 
-//        System.out.println("RD " + rd);
-//        System.out.println("RS " + rs);
-
-        System.out.println(
-                binaryData.getOpCode(instruction) + " "
-                        + binaryData.getRegBinary(rs) + " "
-                        + binaryData.getRegBinary(rd) + " "
-                        + immediate + " ");
     }
 
     ////END I FORMAT///
@@ -367,13 +305,7 @@ public class Binary {
 //        System.out.println("add OPCODE: " + binaryData.getOpCode(instruction));
         String address;
 
-        address = Integer.toBinaryString(labeltoLineNum.get(rawLine) - 1);
-
-        address = jLength(address);
-
-        System.out.println(
-                binaryData.getOpCode(instruction) + " "
-                        + address);
+        address = Integer.toBinaryString(labelToLineNum.get(rawLine) - 1);
 
     }
 
@@ -384,53 +316,14 @@ public class Binary {
 
         String address;
 
-        address = Integer.toBinaryString(labeltoLineNum.get(rawLine) - 1);
+        address = Integer.toBinaryString(labelToLineNum.get(rawLine) - 1);
 
-        address = jLength(address);
-
-        System.out.println(
-                binaryData.getOpCode(instruction) + " "
-                        + address);
+//        address = jLength(address);
     }
 
     ///END J FORMAT ///
 
 
-        /*
-    Helper functions
-    - regParsR - parses RFormat instructions and stores each (3) int an array
-    - immediateLength - makes sure the immediate lenghts are exactly 16 bits long
-    - jLength - makes sure the jump addresses are exactly 26 bits long
-     */
-
-    public void regParseR() {
-        String[] regArr = rawLine.split(",");
-        rd = regArr[0];
-        rs = regArr[1];
-        rt = regArr[2];
-    }
-
-    public void immmediateLength() {
-        if (immediate.length() > 16) {
-            immediate = immediate.substring(16);
-        }
-
-        while (immediate.length() < 16) {
-            immediate = "0" + immediate;
-        }
-    }
-
-    public String jLength(String address) {
-
-        if (address.length() > 26) {
-            address = address.substring(16);
-        }
-
-        while (address.length() < 26) {
-            address = "0" + address;
-        }
-        return address;
-    }
 
 
 }

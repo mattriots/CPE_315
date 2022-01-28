@@ -1,7 +1,7 @@
 /*
   # Name: Matt DePauw
   # Section:  7
-  # Description:  This program converts MIPS assembly code to binary.
+  # Description:
  */
 
 import java.io.File;
@@ -14,18 +14,45 @@ public class lab3 {
     public static void main(String[] args) throws FileNotFoundException {
 
         //Read in the file from cmd line input -> args[0]
-        File file = new File(args[0]);
-        Scanner scanner = new Scanner(file);
+        File asmFile = new File(args[0]);
+        Scanner asmScan = new Scanner(asmFile);
         List<String> rawLines = new ArrayList<>();
 
         //Add all the raw lines to an array list
         //Then send it off to cleanup
-        while (scanner.hasNext()) {
-            rawLines.add(scanner.nextLine());
+        while (asmScan.hasNext()) {
+            rawLines.add(asmScan.nextLine());
+        }
+        asmScan.close(); //Close scanner for .asm file
+
+
+
+        //Read in the script file from cmd line input -> args[1]
+        //If not there its handled with try/catch
+        File scriptFile = null;
+        try {
+            scriptFile = new File(args[1]);
+        }catch (IndexOutOfBoundsException e){
+            System.out.println("No Script file found");
         }
 
+        /*If there is no script file found just move on
+            Else add it to a string array to deal with later
+         */
+        List<String> scriptLines = new ArrayList<>();
+        if(scriptFile != null) {
+            Scanner scriptScan = new Scanner(scriptFile);
+            while(scriptScan.hasNext()){
+                scriptLines.add(scriptScan.nextLine());
+            }
+            scriptScan.close();
+        }
+        //Read out the script
+
+
+
         //This is all the instruction lines cleaned up
-        List<String> cleanLines = cleanup(rawLines);
+        List<String> instructionLines = cleanup(rawLines);
 
         /* ==========================================================================
         Below is the creation of 2 Hashmaps, info stored in them, and optional print outs
@@ -36,17 +63,20 @@ public class lab3 {
         Map<Integer, String> lineNumtoFullInstr = new HashMap<>();
         Map<String, Integer> labelToLineNum = new HashMap<>();
 
-        for (int i = 0; i < cleanLines.size(); i++) {
-            lineNumtoFullInstr.put(i + 1, cleanLines.get(i));
+        for (int i = 0; i < instructionLines.size(); i++) {
+            lineNumtoFullInstr.put(i + 1, instructionLines.get(i));
         }
 
-
-        for (int i = 0; i < cleanLines.size(); i++) {
-            if (cleanLines.get(i).contains(":")) {
-                labelToLineNum.put(cleanLines.get(i).substring(0, cleanLines.get(i).indexOf(":")), i + 1);
+        for (int i = 0; i < instructionLines.size(); i++) {
+            if (instructionLines.get(i).contains(":")) {
+                labelToLineNum.put(instructionLines.get(i).substring(0, instructionLines.get(i).indexOf(":")), i);
             }
         }
-//
+
+        Mips runMips = new Mips(scriptLines, instructionLines, labelToLineNum);
+        runMips.mipsOutput();
+
+
         //Prints out hashmaps
 //        for (Integer num : lineNumtoFullInstr.keySet()) {
 //            System.out.println(num + " " + lineNumtoFullInstr.get(num));
@@ -65,19 +95,24 @@ public class lab3 {
         @ num <----- Line num for all
         @ lineNumetofullInstr.get(num) <--- each cleaned up line
          */
-        Binary bin2;
-        for (Integer num : lineNumtoFullInstr.keySet()) {
-            bin2 = new Binary(labelToLineNum, num, lineNumtoFullInstr.get(num));
-            bin2.binType();
-        }
+
+//        for (Integer num : lineNumtoFullInstr.keySet()) {
+//            bin2 = new Binary(labelToLineNum, num, lineNumtoFullInstr.get(num));
+//            bin2.binType();
+//        }
+
     }
 
-    //Parses and cleans up the .asm file.
-    //Removes all Comments on their own line, comments after commands
-    //Removes white space in front of instructions
-    //Also combines any lone Labels with the line below it
+
+    /*
+    Parses and cleans up the .asm file.
+    Removes all Comments on their own line, comments after commands
+    Removes white space in front of instructions
+    Also combines any lone Labels with the line below it
+    */
+
     public static List<String> cleanup(List<String> rawLines) {
-        List<String> cleanup = new ArrayList<>();
+        List<String> cleanup;
 
         cleanup = rawLines.stream()
                 .map(s -> {
@@ -101,4 +136,6 @@ public class lab3 {
         }
         return cleanup;
     }
+
+
 }
