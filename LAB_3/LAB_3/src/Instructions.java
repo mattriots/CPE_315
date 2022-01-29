@@ -1,41 +1,33 @@
 /*
   # Name: Matt DePauw
   # Section:  7
-  # Description:  This program converts MIPS assembly code to binary.
+  # Description:  This class handles all the operations for the particular instruction.
   # Binary: This class acts as a data structure for ALL MIPS instructions.
  */
 
-
-import java.util.Map;
-
-public class Binary {
+public class Instructions {
     private String rawLine;
     private String instruction;
     private String rs;
     private String rt;
     private String rd;
     private int immediate;
-    private String shamt;
-    private int lineNum;
-    public Mips mips = new Mips();
-    private Map<String, Integer> labelToLineNum;
+    private int shamt;
 
 
-    public Binary(Integer lineNum, String rawLine, Map<String, Integer> labelToLineNum) {
+    public Instructions(String rawLine) {
         this.rawLine = rawLine;
-        this.lineNum = lineNum;
         this.rd = "";
         this.rs = "";
         this.rt = "";
         this.immediate = 0;
-        this.shamt = "00000";
-        this.labelToLineNum = labelToLineNum;
+        this.shamt = 0;
 
     }
 
-    public void binType() {
+    public void instType() {
         if (rawLine.contains(":")) {
-            label(rawLine.substring(0, rawLine.indexOf(":")));
+//            label(rawLine.substring(0, rawLine.indexOf(":")));
             this.rawLine = rawLine.substring(rawLine.indexOf(":") + 1).trim();
         }
         if (rawLine.startsWith("and")) {
@@ -102,12 +94,6 @@ public class Binary {
         }
     }
 
-
-    public void label(String label) {
-//        System.out.println("================= \n" + lineNum + " : " + label + "\n" + "This is a label");
-//        System.out.println(label + " " + lineNum);
-    }
-
     ///R FORMAT////
     // OPCODE : RS : RT : RD : SHAMT : FUNCT //
     public void andInst() {
@@ -155,45 +141,66 @@ public class Binary {
 
     }
 
-    ///HAD TO SWAP RS and RT for some reason...... ???
     public void sllInst() {
-//        System.out.println("================= \n" + lineNum + " : " + rawLine + "\n" + "This is an sllInst");
-//        System.out.println("sll OPCODE: " + binaryData.getOpCode(instruction));
-//        System.out.println("sll FUNCT: " + binaryData.getFunct(instruction));
 
+        String[] regArr = rawLine.split(",");
+        rd = regArr[0];
+        rs = regArr[1];
+        rt = regArr[2];
+        shamt = Integer.parseInt(rt);
 
-        //Deals with Shift AMT
-        shamt = Integer.toBinaryString(Integer.parseInt(rt));
+        int result;
 
-        while (shamt.length() < 5) {
-            shamt = "0" + shamt;
-        }
+        result = MipsData.registers.get(rs) << shamt;
+
+        MipsData.registers.put(rd, result);
 
     }
 
     public void subInst() {
-//        System.out.println("================= \n" + lineNum + " : " + rawLine + "\n" + "This is an subInst");
-//        System.out.println("sub OPCODE: " + binaryData.getOpCode(instruction));
-//        System.out.println("sub FUNCT: " + binaryData.getFunct(instruction));
+
+        String[] regArr = rawLine.split(",");
+        rd = regArr[0];
+        rs = regArr[1];
+        rt = regArr[2];
+
+        int result;
+
+        result = MipsData.registers.get(rs) - MipsData.registers.get(rt);
+
+        MipsData.registers.put(rd, result);
 
 
     }
 
 
     public void sltInst() {
-//        System.out.println("================= \n" + lineNum + " : " + rawLine + "\n" + "This is an sltInst");
-//        System.out.println("slt OPCODE: " + binaryData.getOpCode(instruction));
-//        System.out.println("slt FUNCT: " + binaryData.getFunct(instruction));
+        int rsVal;
+        int rtVal;
+
+        String[] regArr = rawLine.split(",");
+        rd = regArr[0];
+        rs = regArr[1];
+        rt = regArr[2];
+
+        rsVal = MipsData.registers.get(rs);
+        rtVal = MipsData.registers.get(rt);
+
+
+        if(rsVal < rtVal){
+            MipsData.registers.put(rd, 1);
+        }
+        else
+            MipsData.registers.put(rd, 0);
+
 
 
     }
 
     public void jrInst() {
-//        System.out.println("================= \n" + lineNum + " : " + rawLine + "\n" + "This is an jrInst");
-//        System.out.println("jr OPCODE: " + binaryData.getOpCode(instruction));
-//        System.out.println("jr FUNCT: " + binaryData.getFunct(instruction));
-
         rs = rawLine;
+
+        MipsData.pc = MipsData.registers.get(rs) - 1;
 
     }
     ///END R FORMAT///
@@ -226,7 +233,7 @@ public class Binary {
         String[] regArr = rawLine.split(",");
         rd = regArr[0];
         rs = regArr[1];
-        labelNum = labelToLineNum.get(regArr[2]);
+        labelNum = MipsData.labelToLineNumber.get(regArr[2]);
 
         rdVal = MipsData.registers.get(rd);
         rsVal = MipsData.registers.get(rs);
@@ -248,7 +255,7 @@ public class Binary {
         String[] regArr = rawLine.split(",");
         rd = regArr[0];
         rs = regArr[1];
-        labelNum = labelToLineNum.get(regArr[2]);
+        labelNum = MipsData.labelToLineNumber.get(regArr[2]);
 
         rdVal = MipsData.registers.get(rd);
         rsVal = MipsData.registers.get(rs);
@@ -301,24 +308,23 @@ public class Binary {
     ///J FORMAT ////
     //OPCODE : ADDRESS //
     public void jInst() {
-//        System.out.println("================= \n" + lineNum + " : " + rawLine + "\n" + "This is an jInst");
-//        System.out.println("add OPCODE: " + binaryData.getOpCode(instruction));
-        String address;
 
-        address = Integer.toBinaryString(labelToLineNum.get(rawLine) - 1);
+        String label = rawLine;
+
+        MipsData.pc = MipsData.labelToLineNumber.get(label) - 1;
+
 
     }
 
 
     public void jalInst() {
-//        System.out.println("================= \n" + lineNum + " : " + rawLine + "\n" + "This is an jalInst");
-//        System.out.println("add OPCODE: " + binaryData.getOpCode(instruction));
 
-        String address;
+        String label = rawLine;
 
-        address = Integer.toBinaryString(labelToLineNum.get(rawLine) - 1);
+        MipsData.registers.put("$ra", MipsData.pc + 1);
 
-//        address = jLength(address);
+        MipsData.pc = MipsData.labelToLineNumber.get(label) - 1;
+
     }
 
     ///END J FORMAT ///

@@ -1,17 +1,16 @@
-lab2:
-		javac lab2.java
+lab3:
+		javac lab3.java
 tests:
+
+		java lab3 sum_10.asm sum_10.script > test1.txt
+		java lab3 lab3_test3.asm lab3_test3.script > test2.txt
+		java lab3 lab3_fib.asm lab3_fib.script > test3.txt
+
 		
-		
-		java lab2 test1.asm > test1.txt
-		java lab2 test2.asm > test2.txt
-		java lab2 test3.asm > test3.txt
-		java lab2 test4.asm > test4.txt
-		
-		diff -w -B test1.txt test1.output
-		diff -w -B test2.txt test2.output
-		diff -w -B test3.txt test3.output
-		diff -w -B test4.txt test4.output
+		diff -w -B test1.txt sum_10.output
+		diff -w -B test2.txt lab3_test3.output
+		diff -w -B test3.txt lab3_fib.output
+
 		
 clean:
 		rm -f *.class

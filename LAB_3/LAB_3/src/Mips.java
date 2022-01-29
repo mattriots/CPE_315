@@ -1,57 +1,89 @@
-import java.util.HashMap;
+/*
+  # Name: Matt DePauw
+  # Section:  7
+  # Description: This is where all the Mips simulating happens.
+  #
+ */
+
+
+
+
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 
 public class Mips {
 
     public List<String> script;
-    public List<String> instructions;
-    public Map<String, Integer> labelToLineNum;
-    public Binary bin;
+    public Instructions bin;
 
     public Mips() {
 
     }
 
-    public Mips(List<String> script, List<String> instructions, Map<String, Integer> labelToLineNum) {
+    public Mips(List<String> script) {
         this.script = script;
-        this.instructions = instructions;
-        this.labelToLineNum = labelToLineNum;
         MipsData.reset();
     }
 
     public void mipsOutput() {
 
+        if (!script.isEmpty()) {
+            for (String scr : script) {
+                System.out.println("Mips> " + scr);
 
-        Scanner keyboard = new Scanner(System.in);
-        String input;
-        do {
-            System.out.println("mips>");
-            input = keyboard.nextLine();
+                if (scr.equals("h")) {
+                    printH();
 
-            if (input.equals("h")) {
-                printH();
+                } else if (scr.equals("d")) {
+                    printD();
 
-            } else if (input.equals("d")) {
-                printD();
+                } else if (scr.contains("s")) {
+                    step(scr);
 
-            } else if (input.contains("s")) {
-                printS(input);
+                } else if (scr.equals("r")) {
+                    runEnd();
 
-            } else if (input.equals("r")) {
-                printR();
+                } else if (scr.contains("m")) {
+                    displayMem(scr);
 
-            } else if (input.contains("m")) {
-                printM(input);
-
-            } else if (input.equals("c")) {
-                MipsData.reset();
-                System.out.println("Simulator reset");
+                } else if (scr.equals("c")) {
+                    MipsData.reset();
+                    System.out.println("\t\tSimulator reset");
+                } else if (scr.equals("q")) {
+                    System.exit(0);
+                }
             }
+        } else {
 
-        } while (!input.equals("q"));
+            Scanner keyboard = new Scanner(System.in);
+            String input;
+            do {
+                System.out.println("Mips>");
+                input = keyboard.nextLine();
 
+                if (input.equals("h")) {
+                    printH();
+
+                } else if (input.equals("d")) {
+                    printD();
+
+                } else if (input.contains("s")) {
+                    step(input);
+
+                } else if (input.equals("r")) {
+                    runEnd();
+
+                } else if (input.contains("m")) {
+                    displayMem(input);
+
+                } else if (input.equals("c")) {
+                    MipsData.reset();
+                    System.out.println("\t\tSimulator reset");
+                }
+
+            } while (!input.equals("q"));
+
+        }
     }
 
     private void printH() {
@@ -126,40 +158,34 @@ public class Mips {
     /*
     Steps through the code
      */
-    public void printS(String input) {
+    public void step(String input) {
         int stepNum = 0;
 
         String[] arr = input.split(" ");
         if (arr.length <= 1) {
-//            System.out.println("pc: " + MipsData.pc);
-//            System.out.println("inst: " + instructions.get(MipsData.pc));
-            bin = new Binary(MipsData.pc, instructions.get(MipsData.pc), labelToLineNum);
-            bin.binType();
+            bin = new Instructions(MipsData.instructionLines.get(MipsData.pc));
+            bin.instType();
             MipsData.pc++;
             stepNum++;
         } else {
 
-
             stepNum = Integer.parseInt(arr[1]);
 
             for (int i = 0; i < stepNum; i++) {
-//                System.out.println("pc: " + MipsData.pc);
-//                System.out.println("inst: " + instructions.get(MipsData.pc));
 
-                bin = new Binary(MipsData.pc, instructions.get(MipsData.pc), labelToLineNum);
-                bin.binType();
+                bin = new Instructions(MipsData.instructionLines.get(MipsData.pc));
+                bin.instType();
                 MipsData.pc++;
             }
-
-
         }
-        System.out.println(stepNum + " instruction(s) executed");
+        System.out.println("\t\t" + stepNum + " instruction(s) executed");
     }
 
-    public void printR() {
-        while (MipsData.pc < instructions.size()) {
-            bin = new Binary(MipsData.pc, instructions.get(MipsData.pc), labelToLineNum);
-            bin.binType();
+
+    public void runEnd() {
+        while (MipsData.pc < MipsData.instructionLines.size()) {
+            bin = new Instructions(MipsData.instructionLines.get(MipsData.pc));
+            bin.instType();
             MipsData.pc++;
         }
     }
@@ -167,7 +193,7 @@ public class Mips {
     /*
     display data memory from location num1 to num2
      */
-    public void printM(String input) {
+    public void displayMem(String input) {
         String[] arr = input.split(" ");
         int start = Integer.parseInt(arr[1]);
         int end = Integer.parseInt(arr[2]);
