@@ -225,6 +225,7 @@ public class Instructions {
 
     public void beqInst() {
 
+
         int labelNum;
         int rtVal;
         int rsVal;
@@ -239,6 +240,7 @@ public class Instructions {
 
         if (rtVal == rsVal) {
             MipsData.pc = labelNum;
+            MipsData.branchTaken = true;
         }
 
 
@@ -261,6 +263,7 @@ public class Instructions {
 
         if (rtVal != rsVal) {
             MipsData.pc = labelNum - 1;
+            MipsData.branchTaken = true;
         }
 
     }

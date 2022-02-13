@@ -175,7 +175,7 @@ public class Mips {
     public void printP() {
 
         System.out.println("pc      if/id   id/exe  exe/mem mem/wb");
-        System.out.println(MipsData.pc + "\t\t" + MipsData.pipeline.get(0)
+        System.out.println(MipsData.pipePC + "\t\t" + MipsData.pipeline.get(0)
                 + "\t" + MipsData.pipeline.get(1)
                 + "\t" + MipsData.pipeline.get(2)
                 + "\t" + MipsData.pipeline.get(3));
@@ -195,15 +195,35 @@ public class Mips {
         }
         else if (MipsData.pipeline.get(0).equals("j")
                 || MipsData.pipeline.get(1).equals("jal")
-                || MipsData.pipeline.get(1).equals("jr")
-        ) {
+                || MipsData.pipeline.get(1).equals("jr"))
+        {
             MipsData.pipeline.add(0, "squash");
+            MipsData.pipePC++;
 
-        } else {
+        } else if (MipsData.pipeline.get(0).equals("beq") && MipsData.branchTaken){
+            int countdown = 2;
+
+            while(countdown >= 0 ){
+                MipsData.pipePC++;
+                MipsData.cycles++;
+                countdown--;
+            }
+            MipsData.pipeline.add(0, "squash");
+            MipsData.pipeline.add(1, "squash");
+            MipsData.pipeline.add(2, "squash");
+            MipsData.pipeline.add(3, "beq");
+        }
+
+
+        else {
+            MipsData.instructionCount++;
+            System.out.println("Inst#: " + MipsData.instructionCount);
             bin = new Instructions(MipsData.instructionLines.get(MipsData.pc));
             bin.instType();
             MipsData.pipeline.add(0, Instructions.instruction);
+
             MipsData.pc++;
+            MipsData.pipePC++;
         }
         MipsData.cycles++;
     }
@@ -241,12 +261,12 @@ public class Mips {
 
         }
 
-        float cpi = (float) MipsData.cycles / MipsData.pc;
+        float cpi = (float) MipsData.cycles / MipsData.instructionCount;
 
         System.out.println("Program Complete");
         System.out.printf("CPI = %.3f", cpi);
         System.out.println("\tCycles = " + MipsData.cycles +
-                "\tInstructions = " + MipsData.pc);
+                "\tInstructions = " + MipsData.instructionCount);
     }
 
     /*

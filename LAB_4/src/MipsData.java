@@ -13,6 +13,9 @@ import java.util.stream.Collectors;
 public class MipsData {
 
     public static int pc;
+    public static int pipePC;
+    public static int instructionCount;
+    public static boolean branchTaken;
     public static int[] dataMemory;
     public static Map<String, Integer> registers;
     public static List<String> pipeline;
@@ -24,6 +27,9 @@ public class MipsData {
     public static int cycles;
     public static void reset() {
         pc = 0;
+        pipePC = 0;
+        instructionCount = 0;
+        branchTaken = false;
         cycles = 0;
         dataMemory = new int[8192];
         registers = new HashMap<>();
