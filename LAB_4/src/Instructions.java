@@ -34,59 +34,101 @@ public class Instructions {
         if (rawLine.startsWith("and")) {
             instruction = "and";
             rawLine = rawLine.substring(instruction.length());
-            andInst();
+            if (!MipsData.branchTaken) {
+                andInst();
+            }
+
         } else if (rawLine.startsWith("or")) {
             instruction = "or";
             rawLine = rawLine.substring(instruction.length());
-            orInst();
+            if (!MipsData.branchTaken) {
+                orInst();
+            }
+
         } else if (rawLine.startsWith("addi")) {
             instruction = "addi";
             rawLine = rawLine.substring(instruction.length());
-            addiInst();
+            if (!MipsData.branchTaken) {
+                addiInst();
+            }
+
         } else if (rawLine.startsWith("add")) {
             instruction = "add";
             rawLine = rawLine.substring(instruction.length());
-            addInst();
+            if (!MipsData.branchTaken) {
+                addInst();
+            }
+
         } else if (rawLine.startsWith("sll")) {
             instruction = "sll";
             rawLine = rawLine.substring(instruction.length());
-            sllInst();
+            if (!MipsData.branchTaken) {
+                sllInst();
+            }
+
         } else if (rawLine.startsWith("sub")) {
             instruction = "sub";
             rawLine = rawLine.substring(instruction.length());
-            subInst();
+            if (!MipsData.branchTaken) {
+                subInst();
+            }
+
         } else if (rawLine.startsWith("slt")) {
             instruction = "slt";
             rawLine = rawLine.substring(instruction.length());
-            sltInst();
+            if (!MipsData.branchTaken) {
+                sltInst();
+            }
+
         } else if (rawLine.startsWith("beq")) {
             instruction = "beq";
             rawLine = rawLine.substring(instruction.length());
-            beqInst();
+            if (!MipsData.branchTaken) {
+                beqInst();
+            }
+
         } else if (rawLine.startsWith("bne")) {
             instruction = "bne";
             rawLine = rawLine.substring(instruction.length());
-            bneInst();
+            if (!MipsData.branchTaken) {
+                bneInst();
+            }
+
         } else if (rawLine.startsWith("lw")) {
             instruction = "lw";
             rawLine = rawLine.substring(instruction.length());
-            lwInst();
+            if (!MipsData.branchTaken) {
+                lwInst();
+            }
+
         } else if (rawLine.startsWith("sw")) {
             instruction = "sw";
             rawLine = rawLine.substring(instruction.length());
-            swInst();
+            if (!MipsData.branchTaken) {
+                swInst();
+            }
+
         } else if (rawLine.startsWith("jr")) {
             instruction = "jr";
             rawLine = rawLine.substring(instruction.length());
-            jrInst();
+            if (!MipsData.branchTaken) {
+                jrInst();
+            }
+
         } else if (rawLine.startsWith("jal")) {
             instruction = "jal";
             rawLine = rawLine.substring(instruction.length());
-            jalInst();
+            if (!MipsData.branchTaken) {
+                jalInst();
+            }
+
         } else if (rawLine.startsWith("j")) {
             instruction = "j";
             rawLine = rawLine.substring(instruction.length());
-            jInst();
+            if (!MipsData.branchTaken) {
+                jInst();
+            }
+
         } else {
             if (rawLine.contains("$")) {
                 System.out.println("invalid instruction: " + rawLine.substring(0, rawLine.indexOf("$")));
@@ -199,7 +241,8 @@ public class Instructions {
     public void jrInst() {
         rs = rawLine;
 
-        MipsData.pc = MipsData.registers.get(rs);
+//        MipsData.pc = MipsData.registers.get(rs);
+        jumpAddress = MipsData.registers.get(rs);
 
     }
     ///END R FORMAT///
@@ -330,7 +373,7 @@ public class Instructions {
 
         String label = rawLine;
 
-        MipsData.registers.put("$ra", MipsData.pc);
+        MipsData.registers.put("$ra", MipsData.pc + 1);
 
 //        MipsData.pc = MipsData.labelToLineNumber.get(label) - 1;
         jumpAddress = MipsData.labelToLineNumber.get(label);

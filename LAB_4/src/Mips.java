@@ -187,6 +187,7 @@ public class Mips {
         if (MipsData.pipeline.size() > 4) {
             MipsData.pipeline.remove(4);
         }
+
         if (MipsData.pipeline.get(1).equals("lw") && !MipsData.branchTaken
                 && Instructions.rs != null && Instructions.rt != null
                 && (Instructions.rs.equals(MipsData.lwRt)
@@ -198,8 +199,8 @@ public class Mips {
                 || MipsData.pipeline.get(0).equals("jal")
                 || MipsData.pipeline.get(0).equals("jr")) {
             MipsData.pipeline.add(0, "squash");
-//            MipsData.pipePC++;
             MipsData.pc = Instructions.jumpAddress;
+
 
         }
         else if ((MipsData.pipeline.get(2).equals("beq")
@@ -207,36 +208,35 @@ public class Mips {
                 && MipsData.branchTaken
                 && MipsData.branchCountdown == 0)
         {
+            String bneOrBeq = MipsData.pipeline.get(2);
 
             MipsData.pipeline.add(0, "squash");
             MipsData.pipeline.add(1, "squash");
             MipsData.pipeline.add(2, "squash");
-            MipsData.pipeline.add(3, "beq");
+            MipsData.pipeline.add(3, bneOrBeq);
             MipsData.branchTaken = false;
             MipsData.pc = Instructions.jumpAddress;
-            MipsData.cycles += 4;
+//            MipsData.cycles += 3;
             MipsData.instructionCount ++;
 
         }
         else
         {
-//            System.out.println("Inst#: " + MipsData.instructionCount);
-
             bin = new Instructions(MipsData.instructionLines.get(MipsData.pc));
             bin.instType();
             MipsData.pc++;
             MipsData.pipeline.add(0, Instructions.instruction);
-
-
-//            MipsData.pipePC++;
             MipsData.instructionCount++;
+
             if (MipsData.branchCountdown > 0) {
                 MipsData.branchCountdown--;
                 MipsData.instructionCount--;
+
             }
         }
         MipsData.cycles++;
         System.out.println("Cycles: " + MipsData.cycles);
+        System.out.println("Inst #: " + MipsData.instructionCount);
     }
 
     /*
