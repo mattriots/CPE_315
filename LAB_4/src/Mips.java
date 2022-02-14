@@ -175,7 +175,7 @@ public class Mips {
     public void printP() {
 
         System.out.println("pc      if/id   id/exe  exe/mem mem/wb");
-        System.out.println(MipsData.pipePC + "\t\t" + MipsData.pipeline.get(0)
+        System.out.println(MipsData.pc + "\t\t" + MipsData.pipeline.get(0)
                 + "\t" + MipsData.pipeline.get(1)
                 + "\t" + MipsData.pipeline.get(2)
                 + "\t" + MipsData.pipeline.get(3));
@@ -187,45 +187,56 @@ public class Mips {
         if (MipsData.pipeline.size() > 4) {
             MipsData.pipeline.remove(4);
         }
-        if (MipsData.pipeline.get(1).equals("lw")
+        if (MipsData.pipeline.get(1).equals("lw") && !MipsData.branchTaken
                 && Instructions.rs != null && Instructions.rt != null
                 && (Instructions.rs.equals(MipsData.lwRt)
-                || Instructions.rt.equals(MipsData.lwRt))) {
+                || Instructions.rt.equals(MipsData.lwRt)))
+        {
             MipsData.pipeline.add(1, "stall");
         }
         else if (MipsData.pipeline.get(0).equals("j")
-                || MipsData.pipeline.get(1).equals("jal")
-                || MipsData.pipeline.get(1).equals("jr"))
-        {
+                || MipsData.pipeline.get(0).equals("jal")
+                || MipsData.pipeline.get(0).equals("jr")) {
             MipsData.pipeline.add(0, "squash");
-            MipsData.pipePC++;
+//            MipsData.pipePC++;
+            MipsData.pc = Instructions.jumpAddress;
 
-        } else if (MipsData.pipeline.get(0).equals("beq") && MipsData.branchTaken){
-            int countdown = 2;
+        }
+        else if ((MipsData.pipeline.get(2).equals("beq")
+                || MipsData.pipeline.get(2).equals("bne"))
+                && MipsData.branchTaken
+                && MipsData.branchCountdown == 0)
+        {
 
-            while(countdown >= 0 ){
-                MipsData.pipePC++;
-                MipsData.cycles++;
-                countdown--;
-            }
             MipsData.pipeline.add(0, "squash");
             MipsData.pipeline.add(1, "squash");
             MipsData.pipeline.add(2, "squash");
             MipsData.pipeline.add(3, "beq");
+            MipsData.branchTaken = false;
+            MipsData.pc = Instructions.jumpAddress;
+            MipsData.cycles += 4;
+            MipsData.instructionCount ++;
+
         }
+        else
+        {
+//            System.out.println("Inst#: " + MipsData.instructionCount);
 
-
-        else {
-            MipsData.instructionCount++;
-            System.out.println("Inst#: " + MipsData.instructionCount);
             bin = new Instructions(MipsData.instructionLines.get(MipsData.pc));
             bin.instType();
+            MipsData.pc++;
             MipsData.pipeline.add(0, Instructions.instruction);
 
-            MipsData.pc++;
-            MipsData.pipePC++;
+
+//            MipsData.pipePC++;
+            MipsData.instructionCount++;
+            if (MipsData.branchCountdown > 0) {
+                MipsData.branchCountdown--;
+                MipsData.instructionCount--;
+            }
         }
         MipsData.cycles++;
+        System.out.println("Cycles: " + MipsData.cycles);
     }
 
     /*
@@ -237,19 +248,17 @@ public class Mips {
         String[] arr = input.split(" ");
         if (arr.length <= 1) {
             pipelineLogic();
+            System.out.println("PC: " + MipsData.pc);
+            System.out.println("INST: " + Instructions.instruction + Instructions.rawLine);
+
         } else {
 
             stepNum = Integer.parseInt(arr[1]);
 
             for (int i = 0; i < stepNum; i++) {
-
-//                bin = new Instructions(MipsData.instructionLines.get(MipsData.pc));
-//                bin.instType();
                 pipelineLogic();
-//                MipsData.pc++;
             }
         }
-//        System.out.println("\t\t" + stepNum + " instruction(s) executed");
         printP();
     }
 
@@ -257,7 +266,7 @@ public class Mips {
     public void runEnd() {
         while (MipsData.pc < MipsData.instructionLines.size()) {
             pipelineLogic();
-//        printP();
+            System.out.println(MipsData.pc + " " + Instructions.rawLine);
 
         }
 

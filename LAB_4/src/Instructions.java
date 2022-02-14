@@ -6,7 +6,7 @@
  */
 
 public class Instructions {
-    private String rawLine;
+    public static String rawLine;
     public static String instruction;
     public static String rs;
     public static String rt;
@@ -199,7 +199,7 @@ public class Instructions {
     public void jrInst() {
         rs = rawLine;
 
-        MipsData.pc = MipsData.registers.get(rs) - 1;
+        MipsData.pc = MipsData.registers.get(rs);
 
     }
     ///END R FORMAT///
@@ -234,13 +234,17 @@ public class Instructions {
         rt = regArr[0];
         rs = regArr[1];
         labelNum = MipsData.labelToLineNumber.get(regArr[2]);
+        jumpAddress = MipsData.labelToLineNumber.get(regArr[2]);
 
         rtVal = MipsData.registers.get(rt);
         rsVal = MipsData.registers.get(rs);
 
         if (rtVal == rsVal) {
-            MipsData.pc = labelNum;
             MipsData.branchTaken = true;
+            MipsData.branchCountdown = 3;
+//                MipsData.pc = labelNum;
+
+
         }
 
 
@@ -257,13 +261,14 @@ public class Instructions {
         rt = regArr[0];
         rs = regArr[1];
         labelNum = MipsData.labelToLineNumber.get(regArr[2]);
+        jumpAddress = MipsData.labelToLineNumber.get(regArr[2]);
 
         rtVal = MipsData.registers.get(rt);
         rsVal = MipsData.registers.get(rs);
 
         if (rtVal != rsVal) {
-            MipsData.pc = labelNum - 1;
             MipsData.branchTaken = true;
+            MipsData.branchCountdown = 3;
         }
 
     }
@@ -313,9 +318,10 @@ public class Instructions {
     public void jInst() {
 
         String label = rawLine;
+//
+//        MipsData.pc = MipsData.labelToLineNumber.get(label) - 1;
 
-        MipsData.pc = MipsData.labelToLineNumber.get(label) - 1;
-
+        jumpAddress = MipsData.labelToLineNumber.get(label);
 
     }
 
@@ -324,9 +330,10 @@ public class Instructions {
 
         String label = rawLine;
 
-        MipsData.registers.put("$ra", MipsData.pc + 1);
+        MipsData.registers.put("$ra", MipsData.pc);
 
-        MipsData.pc = MipsData.labelToLineNumber.get(label) - 1;
+//        MipsData.pc = MipsData.labelToLineNumber.get(label) - 1;
+        jumpAddress = MipsData.labelToLineNumber.get(label);
 
     }
 

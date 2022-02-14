@@ -14,7 +14,6 @@ pc	if/id	id/exe	exe/mem	mem/wb
 3	addi	squash	j	empty
  
 mips> s
- 
 pc	if/id	id/exe	exe/mem	mem/wb
 4	addi	addi	squash	j
  

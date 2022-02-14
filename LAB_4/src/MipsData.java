@@ -15,7 +15,9 @@ public class MipsData {
     public static int pc;
     public static int pipePC;
     public static int instructionCount;
+    public static int branchCountdown;
     public static boolean branchTaken;
+
     public static int[] dataMemory;
     public static Map<String, Integer> registers;
     public static List<String> pipeline;
@@ -29,6 +31,7 @@ public class MipsData {
         pc = 0;
         pipePC = 0;
         instructionCount = 0;
+        branchCountdown = 0;
         branchTaken = false;
         cycles = 0;
         dataMemory = new int[8192];
