@@ -184,6 +184,7 @@ public class Mips {
 
     // If lw $rd == add $rs || $rt
     public void pipelineLogic() {
+
         if (MipsData.pipeline.size() > 4) {
             MipsData.pipeline.remove(4);
         }
@@ -194,6 +195,7 @@ public class Mips {
                 || Instructions.rt.equals(MipsData.lwRt)))
         {
             MipsData.pipeline.add(1, "stall");
+
         }
         else if (MipsData.pipeline.get(0).equals("j")
                 || MipsData.pipeline.get(0).equals("jal")
@@ -215,9 +217,10 @@ public class Mips {
             MipsData.pipeline.add(2, "squash");
             MipsData.pipeline.add(3, bneOrBeq);
             MipsData.branchTaken = false;
+            MipsData.beqOrBne = true;
             MipsData.pc = Instructions.jumpAddress;
-//            MipsData.cycles += 3;
             MipsData.instructionCount ++;
+
 
         }
         else
@@ -228,6 +231,7 @@ public class Mips {
             MipsData.pipeline.add(0, Instructions.instruction);
             MipsData.instructionCount++;
 
+
             if (MipsData.branchCountdown > 0) {
                 MipsData.branchCountdown--;
                 MipsData.instructionCount--;
@@ -235,8 +239,16 @@ public class Mips {
             }
         }
         MipsData.cycles++;
+
+        if(MipsData.beqOrBne && MipsData.instructionLines.size() == MipsData.pc){
+            MipsData.cycles+= 4;
+        }
         System.out.println("Cycles: " + MipsData.cycles);
         System.out.println("Inst #: " + MipsData.instructionCount);
+        System.out.println("PC: " + MipsData.pc);
+        System.out.println("INST: " + Instructions.instruction + Instructions.rawLine);
+        System.out.println("BranchTaken: " + MipsData.branchTaken);
+        System.out.println(MipsData.pc + " " + Instructions.rawLine);
     }
 
     /*
@@ -248,8 +260,7 @@ public class Mips {
         String[] arr = input.split(" ");
         if (arr.length <= 1) {
             pipelineLogic();
-            System.out.println("PC: " + MipsData.pc);
-            System.out.println("INST: " + Instructions.instruction + Instructions.rawLine);
+
 
         } else {
 
@@ -259,14 +270,15 @@ public class Mips {
                 pipelineLogic();
             }
         }
-        printP();
+//        printP();
     }
 
 
     public void runEnd() {
         while (MipsData.pc < MipsData.instructionLines.size()) {
             pipelineLogic();
-            System.out.println(MipsData.pc + " " + Instructions.rawLine);
+
+            printP();
 
         }
 
