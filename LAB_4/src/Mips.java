@@ -243,12 +243,12 @@ public class Mips {
         if(MipsData.beqOrBne && MipsData.instructionLines.size() == MipsData.pc){
             MipsData.cycles+= 4;
         }
-        System.out.println("Cycles: " + MipsData.cycles);
-        System.out.println("Inst #: " + MipsData.instructionCount);
-        System.out.println("PC: " + MipsData.pc);
-        System.out.println("INST: " + Instructions.instruction + Instructions.rawLine);
-        System.out.println("BranchTaken: " + MipsData.branchTaken);
-        System.out.println(MipsData.pc + " " + Instructions.rawLine);
+//        System.out.println("Cycles: " + MipsData.cycles);
+//        System.out.println("Inst #: " + MipsData.instructionCount);
+//        System.out.println("PC: " + MipsData.pc);
+//        System.out.println("INST: " + Instructions.instruction + Instructions.rawLine);
+//        System.out.println("BranchTaken: " + MipsData.branchTaken);
+//        System.out.println(MipsData.pc + " " + Instructions.rawLine);
     }
 
     /*
@@ -270,7 +270,7 @@ public class Mips {
                 pipelineLogic();
             }
         }
-//        printP();
+        printP();
     }
 
 
@@ -278,13 +278,13 @@ public class Mips {
         while (MipsData.pc < MipsData.instructionLines.size()) {
             pipelineLogic();
 
-            printP();
+//            printP();
 
         }
 
         float cpi = (float) MipsData.cycles / MipsData.instructionCount;
 
-        System.out.println("Program Complete");
+        System.out.println("Program complete");
         System.out.printf("CPI = %.3f", cpi);
         System.out.println("\tCycles = " + MipsData.cycles +
                 "\tInstructions = " + MipsData.instructionCount);
