@@ -2,7 +2,6 @@
   # Name: Matt DePauw
   # Section:  7
   # Description:  This class handles all the operations for the particular instruction.
-  # Binary: This class acts as a data structure for ALL MIPS instructions.
  */
 
 public class Instructions {
