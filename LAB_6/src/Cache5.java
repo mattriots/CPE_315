@@ -1,9 +1,8 @@
 public class Cache5 {
-    public LRU2[] tagArr1;
-    public LRU2[] tagArr2;
-    public LRU2[] tagArr3;
-    public LRU2[] tagArr4;
-    public int cacheSize;
+    public LRU[] tagArr1;
+    public LRU[] tagArr2;
+    public LRU[] tagArr3;
+    public LRU[] tagArr4;
     public int assoc;
     public int blockSize;
     public int hitCount;
@@ -11,17 +10,16 @@ public class Cache5 {
     public int count;
 
     public Cache5() {
-        tagArr1 = new LRU2[512];
-        tagArr2 = new LRU2[512];
-        tagArr3 = new LRU2[512];
-        tagArr4 = new LRU2[512];
+        tagArr1 = new LRU[512];
+        tagArr2 = new LRU[512];
+        tagArr3 = new LRU[512];
+        tagArr4 = new LRU[512];
         for (int i = 0; i < tagArr1.length; i++) {
-            tagArr1[i] = new LRU2();
-            tagArr2[i] = new LRU2();
-            tagArr3[i] = new LRU2();
-            tagArr4[i] = new LRU2();
+            tagArr1[i] = new LRU();
+            tagArr2[i] = new LRU();
+            tagArr3[i] = new LRU();
+            tagArr4[i] = new LRU();
         }
-        cacheSize = 2048;
         assoc = 4;
         blockSize = 1;
         hitCount = 0;
@@ -32,8 +30,8 @@ public class Cache5 {
     public void cache(int address, int lineNum) {
         count++;
 
-        int index = address % 512;
-        int tag = address / 512;
+        int index = address & 511;
+        int tag = address >> 9;
 
 
         if (tagArr1[index].getTag() == tag) {

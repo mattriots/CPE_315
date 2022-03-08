@@ -1,8 +1,8 @@
 public class Cache6 {
-    public LRU2[] tagArr1;
-    public LRU2[] tagArr2;
-    public LRU2[] tagArr3;
-    public LRU2[] tagArr4;
+    public LRU[] tagArr1;
+    public LRU[] tagArr2;
+    public LRU[] tagArr3;
+    public LRU[] tagArr4;
     public int cacheSize;
     public int assoc;
     public int blockSize;
@@ -11,15 +11,15 @@ public class Cache6 {
     public int count;
 
     public Cache6() {
-        tagArr1 = new LRU2[32];
-        tagArr2 = new LRU2[32];
-        tagArr3 = new LRU2[32];
-        tagArr4 = new LRU2[32];
+        tagArr1 = new LRU[32];
+        tagArr2 = new LRU[32];
+        tagArr3 = new LRU[32];
+        tagArr4 = new LRU[32];
         for (int i = 0; i < tagArr1.length; i++) {
-            tagArr1[i] = new LRU2();
-            tagArr2[i] = new LRU2();
-            tagArr3[i] = new LRU2();
-            tagArr4[i] = new LRU2();
+            tagArr1[i] = new LRU();
+            tagArr2[i] = new LRU();
+            tagArr3[i] = new LRU();
+            tagArr4[i] = new LRU();
         }
         cacheSize = 2048;
         assoc = 4;
@@ -32,8 +32,8 @@ public class Cache6 {
     public void cache(int address, int lineNum) {
         count++;
 
-        int index = (address / 16 ) % 32;
-        int tag = address / 512;
+        int index = (address >> 4 ) & 31;
+        int tag = address >> 9;
 
 
         if (tagArr1[index].getTag() == tag) {

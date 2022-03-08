@@ -1,14 +1,21 @@
+/*
+  # Name: Matt DePauw
+  # Section:  7
+  # Description:  Simulates multiple types of Caches.
+ */
+
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.HashSet;
 import java.util.Scanner;
-import java.util.Set;
+
 
 public class lab6 {
 
     public static void main(String[] args) throws FileNotFoundException {
+        
         File file = new File(args[0]);
         Scanner scanner = new Scanner(file);
+
         Cache cache = new Cache();
         Cache2 cache2 = new Cache2();
         Cache3 cache3 = new Cache3();
@@ -38,22 +45,6 @@ public class lab6 {
         cache5.output();
         cache6.output();
         cache7.output();
-
-
-//        Set<Integer> tagSet = new HashSet<>();
-//        int count = 0;
-//        for(int i = 0; i < cache.tagArr.length; i++){
-//            if(cache.tagArr[i] > 0){
-//                count ++;
-//                System.out.println(i+ " : " +cache.tagArr[i]);
-//                tagSet.add(cache.tagArr[i]);
-//            }
-//
-//        }
-//        System.out.println(tagSet);
-//        System.out.println(tagSet.size());
-//        System.out.println(count);
-
     }
 
 

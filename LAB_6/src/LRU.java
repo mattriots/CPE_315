@@ -1,18 +1,19 @@
-public class LRU2 {
+/*
+  # Name: Matt DePauw
+  # Section:  7
+  # Description:  Data structure to hold the tag and line number for LRU
+ */
+
+
+public class LRU {
 
     private int tag;
     private int lineNum;
 
 
-    public LRU2(){
+    public LRU(){
         this.tag = 0;
         this.lineNum = 0;
-    }
-
-
-    public LRU2(int index, int lineNum){
-        this.tag = index;
-        this.lineNum = lineNum;
     }
 
     public int getTag(){

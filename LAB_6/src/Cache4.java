@@ -1,8 +1,6 @@
-import java.util.*;
-
 public class Cache4 {
-    public LRU2[] tagArr1;
-    public LRU2[] tagArr2;
+    public LRU[] tagArr1;
+    public LRU[] tagArr2;
     public int cacheSize;
     public int assoc;
     public int blockSize;
@@ -11,11 +9,11 @@ public class Cache4 {
     public int count;
 
     public Cache4() {
-        tagArr1 = new LRU2[1024];
-        tagArr2 = new LRU2[1024];
+        tagArr1 = new LRU[1024];
+        tagArr2 = new LRU[1024];
         for (int i = 0; i < tagArr1.length; i++) {
-            tagArr1[i] = new LRU2();
-            tagArr2[i] = new LRU2();
+            tagArr1[i] = new LRU();
+            tagArr2[i] = new LRU();
         }
         cacheSize = 2048;
         assoc = 2;
@@ -32,24 +30,19 @@ public class Cache4 {
 
     public void cache(int address, int lineNum) {
         count++;
-        int bytOffset = address & 3;
-        int blkOffset = (address >> 2) & 1;
-        int index = address % 1024;
-        int tag = address / 1024;
+        int index = address & 1023;
+        int tag = address >> 10;
 
-//        System.out.println("ByteOff:\t" + bytOffset);
-//        System.out.println("BlkOff:\t" + blkOffset);
-//        System.out.println("index:\t" + index);
-//        System.out.println("tag:\t" + tag);
+
 
         if (tagArr1[index].getTag() == tag) {
             hitCount++;
             tagArr1[index].setLineNum(lineNum);
-//            System.out.println("Hit");
+
         } else if (tagArr2[index].getTag() == tag) {
             hitCount++;
             tagArr2[index].setLineNum(lineNum);
-//            System.out.println("Hit");
+
         } else if (tagArr1[index].getTag() == 0) {
             tagArr1[index].setTag(tag);
             tagArr1[index].setLineNum(lineNum);//miss
@@ -64,13 +57,6 @@ public class Cache4 {
             tagArr2[index].setLineNum(lineNum);
         }
 
-//        System.out.println("Arr1: " + tagArr1[index].getTag() + " , "
-//                + tagArr1[index].getLineNum());
-//        System.out.println("Arr2: " + tagArr2[index].getTag() + " , "
-//                + tagArr2[index].getLineNum());
-//        System.out.println("Index: " + index);
-//        System.out.println("Tag: " + tag);
-//        System.out.println("------------------------------");
 
     }
 

@@ -1,4 +1,4 @@
-import org.w3c.dom.ls.LSOutput;
+
 
 public class Cache {
     public int[] tagArr;
@@ -20,8 +20,9 @@ public class Cache {
 
     public void cache(int address){
         count++;
-        int index = address % 2048;
-        int tag = address / 2048;
+
+        int index = address & 2047;
+        int tag = address >> 11;
 
 
 

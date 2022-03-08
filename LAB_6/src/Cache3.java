@@ -9,7 +9,6 @@ public class Cache3 {
 
     public Cache3(){
         tagArr = new int[128]; //Each index is a byte
-        cacheSize = tagArr.length;
         assoc = 1;
         blockSize = 4;
         hitCount = 0;
@@ -19,14 +18,9 @@ public class Cache3 {
 
     public void cache(int address) {
         count++;
-        int bytOffset = address & 3;
-        int blkOffset = (address >> 2) % 3;
-//        if(blkOffset > 0){
-//            System.out.println(blkOffset);
-//        }
 
-        int index = (address / 16) % 128;
-        int tag = address / 2048;
+        int index = (address >> 4) & 127;
+        int tag = address >> 11;
 
 //        System.out.println("ByteOff:\t" + bytOffset);
 //        System.out.println("BlkOff:\t" + blkOffset);
@@ -49,7 +43,7 @@ public class Cache3 {
         hitRate = (hitCount / (float) (count));
         hitRate *= 100;
         System.out.println("Cache #3");
-        System.out.println("Cache size: " + cacheSize + "B" +
+        System.out.println("Cache size: " + 2048 + "B" +
                 "\tAssociativity: " + assoc +
                 "\tBlock size: " + blockSize);
         System.out.print("Hits: " + hitCount);
