@@ -1,6 +1,5 @@
 public class Cache3 {
     public int[] tagArr;
-    public int cacheSize;
     public int assoc;
     public int blockSize;
     public int hitCount;
@@ -8,7 +7,7 @@ public class Cache3 {
     public int count;
 
     public Cache3(){
-        tagArr = new int[128]; //Each index is a byte
+        tagArr = new int[128];
         assoc = 1;
         blockSize = 4;
         hitCount = 0;
@@ -21,11 +20,6 @@ public class Cache3 {
 
         int index = (address >> 4) & 127;
         int tag = address >> 11;
-
-//        System.out.println("ByteOff:\t" + bytOffset);
-//        System.out.println("BlkOff:\t" + blkOffset);
-//        System.out.println("index:\t" + index);
-//        System.out.println("tag:\t" + tag);
 
 
         if (tagArr[index] == 0) {

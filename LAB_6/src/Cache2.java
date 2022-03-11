@@ -1,6 +1,5 @@
 public class Cache2 {
     public int[] tagArr;
-    public int cacheSize;
     public int assoc;
     public int blockSize;
     public int hitCount;
@@ -8,7 +7,7 @@ public class Cache2 {
     public int count;
 
     public Cache2() {
-        tagArr = new int[256]; //Each index is a byte
+        tagArr = new int[256];
         assoc = 1;
         blockSize = 2;
         hitCount = 0;

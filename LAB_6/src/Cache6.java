@@ -3,7 +3,6 @@ public class Cache6 {
     public LRU[] tagArr2;
     public LRU[] tagArr3;
     public LRU[] tagArr4;
-    public int cacheSize;
     public int assoc;
     public int blockSize;
     public int hitCount;
@@ -21,7 +20,6 @@ public class Cache6 {
             tagArr3[i] = new LRU();
             tagArr4[i] = new LRU();
         }
-        cacheSize = 2048;
         assoc = 4;
         blockSize = 4;
         hitCount = 0;

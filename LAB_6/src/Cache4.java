@@ -1,7 +1,6 @@
 public class Cache4 {
     public LRU[] tagArr1;
     public LRU[] tagArr2;
-    public int cacheSize;
     public int assoc;
     public int blockSize;
     public int hitCount;
@@ -15,18 +14,12 @@ public class Cache4 {
             tagArr1[i] = new LRU();
             tagArr2[i] = new LRU();
         }
-        cacheSize = 2048;
         assoc = 2;
         blockSize = 1;
         hitCount = 0;
         hitRate = 0;
         count = 0;
     }
-
-    /*
-    Still having issues getting this one to work.
-    Getting too high of a hit count
-    */
 
     public void cache(int address, int lineNum) {
         count++;
@@ -65,7 +58,7 @@ public class Cache4 {
         hitRate = (hitCount / (float) (count));
         hitRate *= 100;
         System.out.println("Cache #4");
-        System.out.println("Cache size: " + cacheSize + "B" +
+        System.out.println("Cache size: " + 2048 + "B" +
                 "\tAssociativity: " + assoc +
                 "\tBlock size: " + blockSize);
         System.out.print("Hits: " + hitCount);

@@ -24,8 +24,6 @@ public class Cache {
         int index = address & 2047;
         int tag = address >> 11;
 
-
-
         if(tagArr[index] == 0){
             tagArr[index] = tag;
         }else if(tagArr[index] != tag){
